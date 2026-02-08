@@ -3,6 +3,7 @@ package ru.stepup.testing;
 import lombok.EqualsAndHashCode;
 import lombok.Getter;
 import lombok.Setter;
+import lombok.SneakyThrows;
 import lombok.ToString;
 
 import java.util.ArrayList;
@@ -11,6 +12,8 @@ import java.util.List;
 @ToString
 @EqualsAndHashCode
 public class Student {
+    @Setter
+    private StudentRepo repo;
     @Getter
     @Setter
     private String name;
@@ -24,10 +27,16 @@ public class Student {
         return new ArrayList<>(grades);
     }
 
+    @SneakyThrows
     public void addGrade(int grade) {
-        if (grade < 2 || grade > 5) {
+        if (!repo.checkGrade(grade)) {
             throw new IllegalArgumentException(grade + " is wrong grade");
         }
         grades.add(grade);
+    }
+
+    @SneakyThrows
+    public int raiting() {
+        return repo.getRatingForGradeSum(grades.stream().mapToInt(x -> x).sum());
     }
 }

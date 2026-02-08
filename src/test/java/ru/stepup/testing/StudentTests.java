@@ -28,6 +28,7 @@ public class StudentTests {
     @ValueSource(ints = {2, 3, 4, 5})
     public void testAddValidGrade(int grade) {
         Student student = new Student("Peter");
+        student.setRepo(new StudentRepoMock());
         student.addGrade(grade);
         assertEquals(List.of(grade), student.getGrades(), "Оценка не добавлена в список оценок");
     }
@@ -36,12 +37,14 @@ public class StudentTests {
     @ValueSource(ints = {0, 6, -1, 100})
     public void testAddInvalidGrade(int invalidGrade) {
         Student student = new Student("Peter");
+        student.setRepo(new StudentRepoMock());
         assertThrows(IllegalArgumentException.class, () -> student.addGrade(invalidGrade), "В список оценок была добавлена невалидная оценка:" + invalidGrade);
     }
 
     @Test
     public void testGetGradesReturnsCopy() {
         Student student = new Student("Peter");
+        student.setRepo(new StudentRepoMock());
         student.addGrade(3);
         List<Integer> grades = student.getGrades();
         grades.add(4);
