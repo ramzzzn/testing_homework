@@ -3,6 +3,7 @@ package ru.stepup.testing;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.params.ParameterizedTest;
 import org.junit.jupiter.params.provider.ValueSource;
+import org.mockito.Mockito;
 
 import java.util.List;
 
@@ -28,6 +29,9 @@ public class StudentTests {
     @ValueSource(ints = {2, 3, 4, 5})
     public void testAddValidGrade(int grade) {
         Student student = new Student("Peter");
+        StudentRepo repo = Mockito.mock(StudentRepo.class);
+        student.setRepo(repo);
+        Mockito.when(repo.checkGrade(grade)).thenReturn(true);
         student.addGrade(grade);
         assertEquals(List.of(grade), student.getGrades(), "Оценка не добавлена в список оценок");
     }
@@ -36,12 +40,18 @@ public class StudentTests {
     @ValueSource(ints = {0, 6, -1, 100})
     public void testAddInvalidGrade(int invalidGrade) {
         Student student = new Student("Peter");
+        StudentRepo repo = Mockito.mock(StudentRepo.class);
+        student.setRepo(repo);
+        Mockito.when(repo.checkGrade(invalidGrade)).thenReturn(false);
         assertThrows(IllegalArgumentException.class, () -> student.addGrade(invalidGrade), "В список оценок была добавлена невалидная оценка:" + invalidGrade);
     }
 
     @Test
     public void testGetGradesReturnsCopy() {
         Student student = new Student("Peter");
+        StudentRepo repo = Mockito.mock(StudentRepo.class);
+        student.setRepo(repo);
+        Mockito.when(repo.checkGrade(3)).thenReturn(true);
         student.addGrade(3);
         List<Integer> grades = student.getGrades();
         grades.add(4);
